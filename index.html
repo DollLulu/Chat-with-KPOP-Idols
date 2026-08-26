@@ -93,10 +93,15 @@
       <div class="home-indicator"><span></span></div>
     </div>
 
-    <!-- Delete chat -->
-    <button type="button" id="deleteChatBtn" class="delete-chat-btn" aria-label="Delete chat" title="Delete chat">
-      <svg viewBox="0 0 24 24"><path d="M9 3h6v2h5v2H4V5h5V3zm-2 6h2v9H7V9zm4 0h2v9h-2V9zm4 0h2v9h-2V9zM6 7h12l-1 14a2 2 0 01-2 2H9a2 2 0 01-2-2L6 7z"/></svg>
-    </button>
+    <!-- Side Actions (Trash & Play) -->
+    <div class="side-actions">
+      <button type="button" id="deleteChatBtn" class="action-btn trash-btn" aria-label="Delete chat" title="Delete chat">
+        <svg viewBox="0 0 24 24"><path d="M9 3h6v2h5v2H4V5h5V3zm-2 6h2v9H7V9zm4 0h2v9h-2V9zm4 0h2v9h-2V9zM6 7h12l-1 14a2 2 0 01-2 2H9a2 2 0 01-2-2L6 7z"/></svg>
+      </button>
+      <button type="button" id="playBtn" class="action-btn play-btn" title="Play Scenario">
+        &#9658; Play
+      </button>
+    </div>
 
     <!-- Control panel -->
     <aside class="control-panel">
@@ -139,7 +144,6 @@
       <div class="panel-section messages-panel">
         <div class="messages-panel-header">
           <h3><img src="Messages.png" alt="" class="panel-icon" /> Messages</h3>
-          <button type="button" id="playBtn" class="play-btn">&#9658; Play</button>
         </div>
         <div id="messageBoxes" class="message-boxes"></div>
         <button type="button" id="addMessageBtn" class="add-message-btn">+ Add message</button>

@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let customArtistCount = 0;
   let lastTimestampShown = false;
   let lastReceivedAvatarEl = null;
+  
+  // A token we check so we can immediately kill playback if the trash is clicked
+  let playbackToken = 0; 
 
   // --- Elements ---
   const messagesEl = document.getElementById('messages');
@@ -528,7 +531,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return box;
   }
 
-  function addMessageBox(data = { sender: 'me', text: '', seconds: 3 }) {
+  // Changed default seconds from 3 to 1
+  function addMessageBox(data = { sender: 'me', text: '', seconds: 1 }) {
     const box = createMessageBox(data);
     messageBoxesEl.appendChild(box);
   }
@@ -557,13 +561,16 @@ document.addEventListener('DOMContentLoaded', () => {
     sendBtn.hidden = true;
   }
 
-  async function typeIntoInputBar(text) {
+  async function typeIntoInputBar(text, token) {
     input.value = '';
     sendBtn.hidden = true;
     for (let i = 0; i < text.length; i++) {
       input.value += text[i];
       if (input.value.trim().length > 0) sendBtn.hidden = false;
       await wait(35 + Math.random() * 55);
+      
+      // If the token changed during this wait (meaning trash was clicked), cancel out
+      if (token !== playbackToken) return;
     }
     await wait(350);
   }
@@ -572,10 +579,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const scenario = readScenario();
     if (scenario.length === 0) return;
 
+    // Create a unique token for this animation run
+    playbackToken++;
+    const currentToken = playbackToken;
+
     playBtn.disabled = true;
     input.disabled = true;
     isPlaying = true;
     resetChat();
+
+    // The requested 1 second delay before playback actually starts
+    await wait(1000);
+    if (currentToken !== playbackToken) return; // Verify trash wasn't clicked while waiting
 
     let lastSentRow = null;
 
@@ -584,7 +599,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const prev = scenario[i - 1];
 
       if (item.sender === 'me') {
-        await typeIntoInputBar(item.text);
+        await typeIntoInputBar(item.text, currentToken);
+        if (currentToken !== playbackToken) return; 
+
         addTimestamp();
         lastSentRow = addMessage(item.text, 'sent');
         input.value = '';
@@ -593,14 +610,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (prev && prev.sender === 'me' && lastSentRow) {
           addSeenIndicator(lastSentRow);
           await wait(2000);
+          if (currentToken !== playbackToken) return; 
         }
         showTyping();
         await wait(2200 + Math.random() * 800);
+        if (currentToken !== playbackToken) return; 
+        
         hideTyping();
         addMessage(item.text, 'received');
       }
 
       await wait(item.seconds * 1000);
+      if (currentToken !== playbackToken) return; 
     }
 
     playBtn.disabled = false;
@@ -664,6 +685,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ---------- Delete chat ---------- */
   deleteChatBtn.addEventListener('click', () => {
+    // Increment the token so the async playScenario loop knows to abort
+    playbackToken++; 
+    isPlaying = false;
+    playBtn.disabled = false;
+    input.disabled = false;
+
     resetChat();
     delete chatThreads[currentArtistKey];
     followupSentFor.delete(currentArtistKey);

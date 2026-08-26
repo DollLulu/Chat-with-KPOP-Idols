@@ -482,33 +482,56 @@ body {
   background: var(--text);
 }
 
-/* Cute pixel trash button */
-.delete-chat-btn {
-  align-self: flex-start;
+/* Side Actions (Trash & Play) */
+.side-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   margin-top: 20px;
-  width: 44px;
+  z-index: 20;
+}
+
+.action-btn {
   height: 44px;
   border-radius: 12px;
-  border: 2px solid #ffb6d9;
-  background: #fff0f7;
-  color: #ff5fa2;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 3px 0 #ffd1ea;
-  image-rendering: pixelated;
   transition: transform 0.15s ease;
-  z-index: 20;
   position: relative;
 }
-.delete-chat-btn svg {
+
+.trash-btn {
+  width: 44px;
+  border: 2px solid #ffb6d9;
+  background: #fff0f7;
+  color: #ff5fa2;
+  box-shadow: 0 3px 0 #ffd1ea;
+  image-rendering: pixelated;
+}
+.trash-btn svg {
   width: 18px;
   height: 18px;
   fill: currentColor;
 }
-.delete-chat-btn:hover { transform: translateY(-1px) scale(1.05); }
-.delete-chat-btn:active { transform: translateY(1px); box-shadow: none; }
+.trash-btn:hover { transform: translateY(-1px) scale(1.05); }
+.trash-btn:active { transform: translateY(1px); box-shadow: none; }
+
+.play-btn {
+  padding: 0 16px;
+  background: linear-gradient(135deg, #ff8fc0, #ffb199);
+  border: 2px solid #ff8fc0;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  box-shadow: 0 3px 0 #e8639e;
+}
+.play-btn:hover { transform: translateY(-1px) scale(1.05); }
+.play-btn:active { transform: translateY(2px); box-shadow: none; }
+.play-btn:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; transform: none; }
+
 
 /* Control panel */
 .control-panel {
@@ -703,25 +726,6 @@ body {
 }
 .messages-panel-header h3 { margin-bottom: 0; }
 
-.play-btn {
-  background: linear-gradient(135deg, #ff8fc0, #ffb199);
-  border: 2px solid #ff8fc0;
-  color: #fff;
-  font-family: inherit;
-  font-size: 12.5px;
-  font-weight: 700;
-  padding: 7px 16px;
-  border-radius: 14px;
-  cursor: pointer;
-  box-shadow: 0 3px 0 #e8639e;
-}
-.play-btn:active { transform: translateY(2px); box-shadow: none; }
-.play-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
 /* Auth panel */
 .auth-buttons {
   display: flex;
@@ -896,9 +900,10 @@ body {
     max-height: none; 
   }
   
-  /* Place the trash button next to the control panel cleanly */
-  .delete-chat-btn {
+  /* Place the side buttons neatly above the panel horizontally */
+  .side-actions {
     margin-top: 0;
+    flex-direction: row;
     align-self: center;
   }
 }
