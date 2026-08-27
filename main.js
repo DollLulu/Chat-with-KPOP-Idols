@@ -34,6 +34,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const addArtistBtn = document.getElementById('addArtistBtn');
   const imageInput = document.getElementById('imageInput');
 
+  // Mascot logic
+  const mascotToggleBtn = document.getElementById('mascotToggleBtn');
+  const mascotPopover = document.getElementById('mascotPopover');
+  const currentMascot = document.getElementById('currentMascot');
+  const mascotOptions = document.querySelectorAll('.mascot-option');
+
+  mascotToggleBtn.addEventListener('click', () => {
+    mascotPopover.hidden = !mascotPopover.hidden;
+  });
+
+  document.addEventListener('click', (e) => {
+    if (mascotPopover && !mascotPopover.hidden) {
+      const clickedInsidePopover = mascotPopover.contains(e.target);
+      const clickedToggle = mascotToggleBtn.contains(e.target);
+      if (!clickedInsidePopover && !clickedToggle) {
+        mascotPopover.hidden = true;
+      }
+    }
+  });
+
+  mascotOptions.forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      currentMascot.src = e.target.src;
+      mascotPopover.hidden = true;
+    });
+  });
+
   const FOLLOWUP_TEXT = "Write our dream cvs in the 'Chat Designer' and hit {icon}";
   const FOLLOWUP_ICON = 'Cat.png';
 
@@ -110,21 +137,17 @@ document.addEventListener('DOMContentLoaded', () => {
   let hasWatchedAd = false; 
 
   addArtistBtn.addEventListener('click', () => {
-    // 1. If they already waited the 5 seconds, open the file picker directly
     if (hasWatchedAd) {
       imageInput.click();
       return;
     }
 
-    // 2. Otherwise, open the Monetag Direct Link ad in a new tab
     window.open('https://omg10.com/4/11667168', '_blank');
 
-    // 3. Visually disable the button and show waiting text
     addArtistBtn.disabled = true;
     const originalContent = addArtistBtn.innerHTML;
     addArtistBtn.innerHTML = `<span style="font-size:13px; font-weight:800; color:#ff8fc4;">Wait</span>`;
 
-    // 4. Wait 5 seconds, then unlock the button
     setTimeout(() => {
       hasWatchedAd = true; 
       addArtistBtn.innerHTML = originalContent;
@@ -137,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const file = imageInput.files[0];
     if (!file) return;
 
-    // Create a local blob URL for the selected image
     const url = URL.createObjectURL(file);
     imageInput.value = '';
 
@@ -169,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     selectArtist(key);
 
-    // Lock the button again so they have to watch another ad for the NEXT profile
     hasWatchedAd = false; 
   });
 
