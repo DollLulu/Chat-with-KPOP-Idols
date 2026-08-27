@@ -89,12 +89,12 @@ document.addEventListener('DOMContentLoaded', () => {
     sendMailBtn.textContent = 'Sending...';
     mailStatusMsg.hidden = true;
 
-
+    // Extracted your project ID directly from your provided JWT key
     const SUPABASE_URL = 'https://ikmupnnfnghzevdwejrh.supabase.co'; 
-    const SUPABASE_ANON_KEY = 'sb_publishable_r3q8EF-m6MmAonVookxZeg_0j0SQMhT';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrbXVwbm5mbmdoemV2ZHdlanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2NzAwNTEsImV4cCI6MjEwMzI0NjA1MX0.6mAtYYggxGgyBXoTjmoNQW2I66dwH2GjaGza1bv0ZkY';
 
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/messages`, {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/Messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
