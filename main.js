@@ -107,20 +107,29 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ---------- Rewarded Ad + File Upload ---------- */
+  let hasWatchedAd = false; 
+
   addArtistBtn.addEventListener('click', () => {
-    // 1. Open the Monetag Direct Link ad in a new tab
+    // 1. If they already waited the 5 seconds, open the file picker directly
+    if (hasWatchedAd) {
+      imageInput.click();
+      return;
+    }
+
+    // 2. Otherwise, open the Monetag Direct Link ad in a new tab
     window.open('https://omg10.com/4/11667168', '_blank');
 
-    // 2. Visually disable the button and show waiting text
+    // 3. Visually disable the button and show waiting text
     addArtistBtn.disabled = true;
     const originalContent = addArtistBtn.innerHTML;
-    addArtistBtn.innerHTML = `<span style="font-size:13px; font-weight:800; color:#ff8fc4;">Ad...</span>`;
+    addArtistBtn.innerHTML = `<span style="font-size:13px; font-weight:800; color:#ff8fc4;">Wait</span>`;
 
-    // 3. Wait 5 seconds, then restore the button and open local image picker
+    // 4. Wait 5 seconds, then unlock the button
     setTimeout(() => {
+      hasWatchedAd = true; 
       addArtistBtn.innerHTML = originalContent;
       addArtistBtn.disabled = false;
-      imageInput.click();
+      alert("Reward unlocked! Click the + button again to upload your picture.");
     }, 5000);
   });
 
@@ -159,6 +168,9 @@ document.addEventListener('DOMContentLoaded', () => {
     artistRail.insertBefore(btn, addArtistBtn);
 
     selectArtist(key);
+
+    // Lock the button again so they have to watch another ad for the NEXT profile
+    hasWatchedAd = false; 
   });
 
   function updateStatusClock() {
