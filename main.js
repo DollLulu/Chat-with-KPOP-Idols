@@ -89,9 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
     sendMailBtn.textContent = 'Sending...';
     mailStatusMsg.hidden = true;
 
-    // TODO: Add your Supabase project details here
-    const SUPABASE_URL = 'https://YOUR_SUPABASE_URL.supabase.co';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    // REPLACE "YOUR_PROJECT_ID" WITH YOUR ACTUAL SUPABASE URL PREFIX
+    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co'; 
+    const SUPABASE_ANON_KEY = 'sb_publishable_r3q8EF-m6MmAonVookxZeg_0j0SQMhT';
 
     try {
       const response = await fetch(`${SUPABASE_URL}/rest/v1/messages`, {
