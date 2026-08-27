@@ -34,31 +34,90 @@ document.addEventListener('DOMContentLoaded', () => {
   const addArtistBtn = document.getElementById('addArtistBtn');
   const imageInput = document.getElementById('imageInput');
 
-  // Mascot logic
+  // Popover elements
   const mascotToggleBtn = document.getElementById('mascotToggleBtn');
   const mascotPopover = document.getElementById('mascotPopover');
   const currentMascot = document.getElementById('currentMascot');
   const mascotOptions = document.querySelectorAll('.mascot-option');
+  
+  const mailToggleBtn = document.getElementById('mailToggleBtn');
+  const mailPopover = document.getElementById('mailPopover');
+  const mailInput = document.getElementById('mailInput');
+  const sendMailBtn = document.getElementById('sendMailBtn');
+  const mailStatusMsg = document.getElementById('mailStatusMsg');
 
+  // Toggle Mascot Popover
   mascotToggleBtn.addEventListener('click', () => {
     mascotPopover.hidden = !mascotPopover.hidden;
+    mailPopover.hidden = true; // close mail if open
   });
 
+  // Toggle Mail Popover
+  mailToggleBtn.addEventListener('click', () => {
+    mailPopover.hidden = !mailPopover.hidden;
+    mascotPopover.hidden = true; // close mascot if open
+  });
+
+  // Handle clicking outside of popovers
   document.addEventListener('click', (e) => {
     if (mascotPopover && !mascotPopover.hidden) {
-      const clickedInsidePopover = mascotPopover.contains(e.target);
-      const clickedToggle = mascotToggleBtn.contains(e.target);
-      if (!clickedInsidePopover && !clickedToggle) {
+      if (!mascotPopover.contains(e.target) && !mascotToggleBtn.contains(e.target)) {
         mascotPopover.hidden = true;
+      }
+    }
+    if (mailPopover && !mailPopover.hidden) {
+      if (!mailPopover.contains(e.target) && !mailToggleBtn.contains(e.target)) {
+        mailPopover.hidden = true;
       }
     }
   });
 
+  // Mascot Selection
   mascotOptions.forEach(opt => {
     opt.addEventListener('click', (e) => {
       currentMascot.src = e.target.src;
       mascotPopover.hidden = true;
     });
+  });
+
+  // Supabase Feedback Logic
+  sendMailBtn.addEventListener('click', async () => {
+    const text = mailInput.value.trim();
+    if (!text) return;
+
+    sendMailBtn.disabled = true;
+    sendMailBtn.textContent = 'Sending...';
+    mailStatusMsg.hidden = true;
+
+    // TODO: Add your Supabase project details here
+    const SUPABASE_URL = 'https://YOUR_SUPABASE_URL.supabase.co';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ messages: text })
+      });
+
+      if (response.ok) {
+        mailInput.value = '';
+        mailStatusMsg.hidden = false;
+        setTimeout(() => { mailStatusMsg.hidden = true; }, 3000);
+      } else {
+        alert('Could not send message. Please try again later.');
+      }
+    } catch (error) {
+      alert('Network error. Please try again later.');
+    }
+
+    sendMailBtn.disabled = false;
+    sendMailBtn.textContent = 'Send 💖';
   });
 
   const FOLLOWUP_TEXT = "Write our dream cvs in the 'Chat Designer' and hit {icon}";
@@ -133,27 +192,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) selectArtist(btn.dataset.artist);
   });
 
-  /* ---------- Rewarded Ad + File Upload ---------- */
-  let hasWatchedAd = false; 
-
+  /* ---------- Instant File Upload ---------- */
   addArtistBtn.addEventListener('click', () => {
-    if (hasWatchedAd) {
-      imageInput.click();
-      return;
-    }
-
-    window.open('https://omg10.com/4/11667168', '_blank');
-
-    addArtistBtn.disabled = true;
-    const originalContent = addArtistBtn.innerHTML;
-    addArtistBtn.innerHTML = `<span style="font-size:13px; font-weight:800; color:#ff8fc4;">Wait</span>`;
-
-    setTimeout(() => {
-      hasWatchedAd = true; 
-      addArtistBtn.innerHTML = originalContent;
-      addArtistBtn.disabled = false;
-      alert("Reward unlocked! Click the + button again to upload your picture.");
-    }, 5000);
+    imageInput.click();
   });
 
   imageInput.addEventListener('change', () => {
@@ -190,8 +231,6 @@ document.addEventListener('DOMContentLoaded', () => {
     artistRail.insertBefore(btn, addArtistBtn);
 
     selectArtist(key);
-
-    hasWatchedAd = false; 
   });
 
   function updateStatusClock() {

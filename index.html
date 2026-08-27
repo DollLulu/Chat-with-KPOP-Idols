@@ -8,9 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-
-  <!-- Monetag MultiTag -->
-  <script src="https://quge5.com/88/tag.min.js" data-zone="273698" async data-cfasync="false"></script>
 </head>
 <body>
   <div class="app-shell">
@@ -107,18 +104,34 @@
       <div class="panel-title-row">
         <div class="panel-title"><img src="Chat Designer.png" alt="" class="panel-icon panel-title-icon" /> Chat Designer</div>
         
-        <div class="mascot-container">
-          <button type="button" class="account-toggle-btn" id="mascotToggleBtn" aria-label="Choose Mascot">
-            <img src="Girl1.png" alt="Mascot" id="currentMascot" />
-          </button>
-          
-          <div class="mascot-popover" id="mascotPopover" hidden>
-            <div class="mascot-grid">
-              <img src="Girl1.png" class="mascot-option" alt="Girl 1" />
-              <img src="Girl2.png" class="mascot-option" alt="Girl 2" />
-              <img src="Girl3.png" class="mascot-option" alt="Girl 3" />
-              <img src="Girl4.png" class="mascot-option" alt="Girl 4" />
-              <img src="Girl5.png" class="mascot-option" alt="Girl 5" />
+        <div class="panel-header-actions">
+          <!-- Mail Bubble -->
+          <div class="mascot-container">
+            <button type="button" class="account-toggle-btn" id="mailToggleBtn" aria-label="Send Message">
+              <img src="mail.png" alt="Mail" />
+            </button>
+            <div class="mascot-popover mail-popover" id="mailPopover" hidden>
+              <div class="mail-popover-title">Drop a little note for DollLulu! 💌✨</div>
+              <textarea id="mailInput" class="panel-input" placeholder="Type here..." style="min-height: 60px; resize: vertical; margin-bottom: 8px;"></textarea>
+              <button type="button" id="sendMailBtn" class="theme-btn active" style="width: 100%; padding: 6px 0;">Send 💖</button>
+              <div id="mailStatusMsg" class="mail-status" hidden>Sent! 💖</div>
+            </div>
+          </div>
+
+          <!-- Mascot Bubble -->
+          <div class="mascot-container">
+            <button type="button" class="account-toggle-btn" id="mascotToggleBtn" aria-label="Choose Mascot">
+              <img src="Girl1.png" alt="Mascot" id="currentMascot" />
+            </button>
+            <div class="mascot-popover" id="mascotPopover" hidden>
+              <div class="mascot-grid">
+                <img src="Girl1.png" class="mascot-option" alt="Girl 1" />
+                <img src="Girl2.png" class="mascot-option" alt="Girl 2" />
+                <img src="Girl3.png" class="mascot-option" alt="Girl 3" />
+                <img src="Girl4.png" class="mascot-option" alt="Girl 4" />
+                <img src="Girl5.png" class="mascot-option" alt="Girl 5" />
+                <img src="Girl6.png" class="mascot-option" alt="Girl 6" />
+              </div>
             </div>
           </div>
         </div>
@@ -138,6 +151,17 @@
         </div>
         <div id="messageBoxes" class="message-boxes"></div>
         <button type="button" id="addMessageBtn" class="add-message-btn">+ Add message</button>
+      </div>
+
+      <!-- Donation Box -->
+      <div class="panel-section donation-section">
+        <h3>Support DollLulu 💖</h3>
+        <p class="panel-label">Did you enjoy the app?</p>
+        <div class="donation-images">
+          <img src="hamster.jpg" alt="Hamster" />
+          <img src="cutecat.jpg" alt="Cute Cat" />
+        </div>
+        <a href="https://www.paypal.com/ncp/payment/TDH2XWQWPFQXQ" target="_blank" class="theme-btn active donation-btn">Donate via PayPal</a>
       </div>
     </aside>
   </div>
