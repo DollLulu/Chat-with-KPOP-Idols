@@ -1,17 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-
-  // --- Globals moved to the top to prevent TDZ (Temporal Dead Zone) crashes on load ---
   let AVATAR = 'Pic.jpg';
   let currentArtistKey = 'katseye';
   let isPlaying = false;
-  let customArtistCount = 0;
   let lastTimestampShown = false;
   let lastReceivedAvatarEl = null;
   
-  // A token we check so we can immediately kill playback if the trash is clicked
   let playbackToken = 0; 
 
-  // --- Elements ---
   const messagesEl = document.getElementById('messages');
   const chatBody = document.getElementById('chatBody');
   const typingIndicator = document.getElementById('typingIndicator');
@@ -27,8 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const introMetaText = document.getElementById('introMetaText');
   const introFollowText = document.getElementById('introFollowText');
 
-  const nameInput = document.getElementById('nameInput');
-  const usernameInput = document.getElementById('usernameInput');
   const accountToggleBtn = document.getElementById('accountToggleBtn');
   const authContainer = document.getElementById('auth-container');
   const themeButtons = document.querySelectorAll('.theme-btn');
@@ -41,14 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const deleteChatBtn = document.getElementById('deleteChatBtn');
   const artistRail = document.getElementById('artistRail');
   const addArtistBtn = document.getElementById('addArtistBtn');
-  const addArtistFreeBtn = document.getElementById('addArtistFreeBtn');
   const imageInput = document.getElementById('imageInput');
 
-  // --- Configuration ---
   const FOLLOWUP_TEXT = "Write our dream cvs in the 'Chat Designer' and hit {icon}";
   const FOLLOWUP_ICON = 'Cat.png';
 
-  // Artists that already delivered their one-time followup message won't auto-reply again
   const followupSentFor = new Set();
 
   const ARTISTS = {
@@ -98,8 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
     introAvatarImg.src = artist.avatar;
     typingAvatarImg.src = artist.avatar;
 
-    nameInput.value = artist.name;
-    usernameInput.value = artist.username;
     headerNameText.textContent = artist.name;
     introNameText.textContent = artist.name;
     headerUsernameText.textContent = artist.username;
@@ -269,33 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const { data: profile } = await supabaseClient
-      .from('profiles')
-      .select('has_paid')
-      .eq('id', user.id)
-      .single();
-
-    if (!profile || !profile.has_paid) {
-      const paypalLink = 'https://www.paypal.com/ncp/payment/LZEGJHLT9GZML';
-      window.location.href = paypalLink;
-      return;
-    }
-
-    imageInput.click();
-  });
-
-  addArtistFreeBtn.addEventListener('click', async () => {
-    if (!supabaseClient) {
-      showImageNotice('Invalid.png');
-      return;
-    }
-    const { data: { user } } = await supabaseClient.auth.getUser();
-
-    if (!user) {
-      authContainer.hidden = false;
-      return;
-    }
-
     imageInput.click();
   });
 
@@ -304,17 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!file) return;
 
     addArtistBtn.disabled = true;
-    addArtistFreeBtn.disabled = true;
     const url = await uploadUserImage(file);
     addArtistBtn.disabled = false;
-    addArtistFreeBtn.disabled = false;
     imageInput.value = '';
     if (!url) return;
 
-    customArtistCount += 1;
-    const key = `custom_${Date.now()}_${customArtistCount}`;
-    const name = `New Friend ${customArtistCount}`;
-    const username = `newfriend${customArtistCount}`;
+    const key = `custom_${Date.now()}`;
+    const name = `Name`;
+    const username = `username`;
 
     ARTISTS[key] = {
       name,
@@ -435,25 +393,38 @@ document.addEventListener('DOMContentLoaded', () => {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  /* ---------- Profile name/username/theme ---------- */
+  /* ---------- Live Phone Name Syncing ---------- */
   function refreshThemLabels() {
-    const name = nameInput.value.trim() || 'Them';
+    const name = headerNameText.textContent.trim() || 'Them';
     document.querySelectorAll('.sender-select option[value="them"]').forEach((opt) => {
       opt.textContent = name;
     });
   }
 
-  nameInput.addEventListener('input', () => {
-    const name = nameInput.value.trim() || 'KATSEYE';
-    headerNameText.textContent = name;
-    introNameText.textContent = name;
+  headerNameText.addEventListener('input', () => {
+    const val = headerNameText.textContent;
+    introNameText.textContent = val;
+    ARTISTS[currentArtistKey].name = val.trim() || 'KATSEYE';
     refreshThemLabels();
   });
 
-  usernameInput.addEventListener('input', () => {
-    const username = usernameInput.value.trim() || 'username';
-    headerUsernameText.textContent = username;
-    introUsernameText.textContent = username;
+  introNameText.addEventListener('input', () => {
+    const val = introNameText.textContent;
+    headerNameText.textContent = val;
+    ARTISTS[currentArtistKey].name = val.trim() || 'KATSEYE';
+    refreshThemLabels();
+  });
+
+  headerUsernameText.addEventListener('input', () => {
+    const val = headerUsernameText.textContent;
+    introUsernameText.textContent = val;
+    ARTISTS[currentArtistKey].username = val.trim() || 'username';
+  });
+
+  introUsernameText.addEventListener('input', () => {
+    const val = introUsernameText.textContent;
+    headerUsernameText.textContent = val;
+    ARTISTS[currentArtistKey].username = val.trim() || 'username';
   });
 
   introMetaText.addEventListener('input', () => {
@@ -487,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
     meOpt.textContent = 'Me';
     const themOpt = document.createElement('option');
     themOpt.value = 'them';
-    themOpt.textContent = nameInput.value.trim() || 'Them';
+    themOpt.textContent = headerNameText.textContent.trim() || 'Them';
     select.appendChild(meOpt);
     select.appendChild(themOpt);
     select.value = data.sender;
@@ -531,7 +502,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return box;
   }
 
-  // Changed default seconds from 3 to 1
   function addMessageBox(data = { sender: 'me', text: '', seconds: 1 }) {
     const box = createMessageBox(data);
     messageBoxesEl.appendChild(box);
@@ -569,7 +539,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (input.value.trim().length > 0) sendBtn.hidden = false;
       await wait(35 + Math.random() * 55);
       
-      // If the token changed during this wait (meaning trash was clicked), cancel out
       if (token !== playbackToken) return;
     }
     await wait(350);
@@ -579,7 +548,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const scenario = readScenario();
     if (scenario.length === 0) return;
 
-    // Create a unique token for this animation run
     playbackToken++;
     const currentToken = playbackToken;
 
@@ -588,9 +556,8 @@ document.addEventListener('DOMContentLoaded', () => {
     isPlaying = true;
     resetChat();
 
-    // The requested 1 second delay before playback actually starts
     await wait(1000);
-    if (currentToken !== playbackToken) return; // Verify trash wasn't clicked while waiting
+    if (currentToken !== playbackToken) return;
 
     let lastSentRow = null;
 
@@ -685,7 +652,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ---------- Delete chat ---------- */
   deleteChatBtn.addEventListener('click', () => {
-    // Increment the token so the async playScenario loop knows to abort
     playbackToken++; 
     isPlaying = false;
     playBtn.disabled = false;

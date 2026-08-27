@@ -25,10 +25,7 @@
       <button type="button" class="artist-btn" data-artist="h2h" aria-label="Hearts2Hearts">
         <img src="h2h.jpg" alt="H2H" />
       </button>
-      <button type="button" class="artist-btn add-btn" id="addArtistBtn" aria-label="Add with Pay">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-      </button>
-      <button type="button" class="artist-btn add-btn free-add-btn" id="addArtistFreeBtn" aria-label="Add Free">
+      <button type="button" class="artist-btn add-btn" id="addArtistBtn" aria-label="Add Friend">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
       </button>
       <input type="file" id="imageInput" accept="image/*" hidden />
@@ -53,8 +50,8 @@
         <div class="header-profile">
           <img src="Pic.jpg" alt="KATSEYE" class="header-avatar" id="headerAvatarImg" />
           <div class="header-name">
-            <span class="header-username"><span id="headerNameText">KATSEYE</span> <span class="badge-wrap"><img src="check.jpg" alt="Verified" class="verified-badge" /></span></span>
-            <span class="header-username-sub" id="headerUsernameText">katseyeworld</span>
+            <span class="header-username"><span id="headerNameText" contenteditable="true" spellcheck="false">KATSEYE</span> <span class="badge-wrap"><img src="check.jpg" alt="Verified" class="verified-badge" /></span></span>
+            <span class="header-username-sub" id="headerUsernameText" contenteditable="true" spellcheck="false">katseyeworld</span>
           </div>
         </div>
       </div>
@@ -63,8 +60,8 @@
       <div class="chat-body" id="chatBody">
         <div class="profile-intro">
           <img src="Pic.jpg" alt="KATSEYE" class="intro-avatar" id="introAvatarImg" />
-          <div class="intro-name"><span id="introNameText">KATSEYE</span> <span class="badge-wrap intro-badge-wrap"><img src="check.jpg" alt="Verified" class="verified-badge intro-badge" /></span></div>
-          <div class="intro-username" id="introUsernameText">katseyeworld</div>
+          <div class="intro-name"><span id="introNameText" contenteditable="true" spellcheck="false">KATSEYE</span> <span class="badge-wrap intro-badge-wrap"><img src="check.jpg" alt="Verified" class="verified-badge intro-badge" /></span></div>
+          <div class="intro-username" id="introUsernameText" contenteditable="true" spellcheck="false">katseyeworld</div>
           <div class="intro-meta" id="introMetaText" contenteditable="true" spellcheck="false">9.4M followers &middot; 1.1K posts</div>
           <div class="intro-follow" id="introFollowText" contenteditable="true" spellcheck="false">You've followed this Instagram account since 2026</div>
         </div>
@@ -131,14 +128,6 @@
           <button type="button" class="theme-btn active" data-theme="light">&#9728;&#65039; Light</button>
           <button type="button" class="theme-btn" data-theme="dark">&#127769; Dark</button>
         </div>
-      </div>
-
-      <div class="panel-section">
-        <h3><img src="Profile.png" alt="" class="panel-icon" /> Profile</h3>
-        <label class="panel-label" for="nameInput">Name</label>
-        <input type="text" id="nameInput" class="panel-input" value="KATSEYE" />
-        <label class="panel-label" for="usernameInput">Username</label>
-        <input type="text" id="usernameInput" class="panel-input" value="katseyeworld" />
       </div>
 
       <div class="panel-section messages-panel">
