@@ -8,7 +8,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Monetag MultiTag -->
+  <script src="https://quge5.com/88/tag.min.js" data-zone="273698" async data-cfasync="false"></script>
 </head>
 <body>
   <div class="app-shell">
@@ -104,22 +106,6 @@
     <aside class="control-panel">
       <div class="panel-title-row">
         <div class="panel-title"><img src="Chat Designer.png" alt="" class="panel-icon panel-title-icon" /> Chat Designer</div>
-        <button type="button" id="accountToggleBtn" class="account-toggle-btn" aria-label="Toggle account panel">
-          <img src="Girl1.png" alt="Account" />
-        </button>
-      </div>
-
-      <!-- Authentication -->
-      <div class="panel-section auth-popover" id="auth-container" hidden>
-        <h3><img src="Account.png" alt="" class="panel-icon" /> Account</h3>
-        <input type="email" id="auth-email" class="panel-input" placeholder="Your email address" required />
-        <input type="password" id="auth-password" class="panel-input" placeholder="Password" required />
-        <div class="auth-buttons">
-          <button type="button" id="btn-signin" class="auth-btn">Sign In</button>
-          <button type="button" id="btn-signup" class="auth-btn">Sign Up</button>
-        </div>
-        <p id="auth-user-info" class="auth-user-info" style="display: none;"></p>
-        <button type="button" id="btn-signout" class="auth-btn signout-btn" style="display: none;">Sign Out</button>
       </div>
 
       <div class="panel-section">

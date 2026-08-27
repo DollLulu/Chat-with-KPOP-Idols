@@ -22,8 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const introMetaText = document.getElementById('introMetaText');
   const introFollowText = document.getElementById('introFollowText');
 
-  const accountToggleBtn = document.getElementById('accountToggleBtn');
-  const authContainer = document.getElementById('auth-container');
   const themeButtons = document.querySelectorAll('.theme-btn');
   const messageBoxesEl = document.getElementById('messageBoxes');
   const addMessageBtn = document.getElementById('addMessageBtn');
@@ -108,167 +106,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) selectArtist(btn.dataset.artist);
   });
 
-  /* ---------- Upload a custom chat via Supabase Storage ---------- */
-  const supabaseUrl = 'https://ikmupnnfnghzevdwejrh.supabase.co';
-  const supabaseKey = 'sb_publishable_r3q8EF-m6MmAonVookxZeg_0j0SQMhT';
-  const supabaseClient = window.supabase && typeof window.supabase.createClient === 'function'
-    ? window.supabase.createClient(supabaseUrl, supabaseKey)
-    : null;
+  /* ---------- Rewarded Ad + File Upload ---------- */
+  addArtistBtn.addEventListener('click', () => {
+    // 1. Open the Monetag Direct Link ad in a new tab
+    window.open('https://omg10.com/4/11667168', '_blank');
 
-  /* ---------- Auth ---------- */
-  const authEmailInput = document.getElementById('auth-email');
-  const authPasswordInput = document.getElementById('auth-password');
-  const btnSignUp = document.getElementById('btn-signup');
-  const btnSignIn = document.getElementById('btn-signin');
-  const btnSignOut = document.getElementById('btn-signout');
-  const authUserInfo = document.getElementById('auth-user-info');
+    // 2. Visually disable the button and show waiting text
+    addArtistBtn.disabled = true;
+    const originalContent = addArtistBtn.innerHTML;
+    addArtistBtn.innerHTML = `<span style="font-size:13px; font-weight:800; color:#ff8fc4;">Ad...</span>`;
 
-  function showImageNotice(imageSrc) {
-    const existing = document.querySelector('.image-notice-overlay');
-    if (existing) existing.remove();
-
-    const overlay = document.createElement('div');
-    overlay.className = 'image-notice-overlay';
-
-    const image = document.createElement('img');
-    image.src = imageSrc;
-    image.alt = '';
-    image.className = 'image-notice';
-    image.addEventListener('click', () => overlay.remove());
-
-    overlay.appendChild(image);
-    document.body.appendChild(overlay);
-  }
-
-  accountToggleBtn.addEventListener('click', () => {
-    authContainer.hidden = !authContainer.hidden;
+    // 3. Wait 5 seconds, then restore the button and open local image picker
+    setTimeout(() => {
+      addArtistBtn.innerHTML = originalContent;
+      addArtistBtn.disabled = false;
+      imageInput.click();
+    }, 5000);
   });
 
-  document.addEventListener('click', (e) => {
-    if (authContainer.hidden) return;
-    const clickedInsidePopover = authContainer.contains(e.target);
-    const clickedToggle = accountToggleBtn.contains(e.target);
-    if (!clickedInsidePopover && !clickedToggle) {
-      authContainer.hidden = true;
-    }
-  });
-
-  btnSignUp.addEventListener('click', async () => {
-    if (!supabaseClient) {
-      showImageNotice('Invalid.png');
-      return;
-    }
-    const email = authEmailInput.value.trim();
-    const password = authPasswordInput.value;
-
-    if (!email || !password) {
-      showImageNotice('Invalid.png');
-      return;
-    }
-
-    const { error } = await supabaseClient.auth.signUp({ email, password });
-
-    if (error) {
-      showImageNotice('Invalid.png');
-    } else {
-      showImageNotice('created.png');
-    }
-  });
-
-  btnSignIn.addEventListener('click', async () => {
-    if (!supabaseClient) {
-      showImageNotice('Invalid.png');
-      return;
-    }
-    const email = authEmailInput.value.trim();
-    const password = authPasswordInput.value;
-
-    if (!email || !password) {
-      showImageNotice('Invalid.png');
-      return;
-    }
-
-    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
-    if (error) {
-      showImageNotice('Invalid.png');
-    } else {
-      console.log('Signed in successfully:', data.user);
-    }
-  });
-
-  btnSignOut.addEventListener('click', async () => {
-    if (!supabaseClient) return;
-    await supabaseClient.auth.signOut();
-  });
-
-  if (supabaseClient) {
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      const user = session?.user;
-
-      if (user) {
-        authUserInfo.textContent = `Logged in as: ${user.email}`;
-        authUserInfo.style.display = 'block';
-        btnSignOut.style.display = 'inline-block';
-      } else {
-        authUserInfo.style.display = 'none';
-        btnSignOut.style.display = 'none';
-      }
-    });
-  } else {
-    authUserInfo.style.display = 'none';
-    btnSignOut.style.display = 'none';
-  }
-
-  async function uploadUserImage(file) {
-    if (!supabaseClient) {
-      showImageNotice('Invalid.png');
-      return null;
-    }
-    const { data: { user } } = await supabaseClient.auth.getUser();
-
-    if (!user) {
-      showImageNotice('signedin.png');
-      return null;
-    }
-
-    const filePath = `${user.id}/${Date.now()}_${file.name}`;
-    const { error } = await supabaseClient.storage.from('user-uploads').upload(filePath, file);
-    
-    if (error) {
-      console.error('Upload error:', error.message);
-      showImageNotice('Invalid.png');
-      return null;
-    }
-
-    const { data: publicUrlData } = supabaseClient.storage.from('user-uploads').getPublicUrl(filePath);
-    return publicUrlData.publicUrl;
-  }
-
-  addArtistBtn.addEventListener('click', async () => {
-    if (!supabaseClient) {
-      showImageNotice('Invalid.png');
-      return;
-    }
-    const { data: { user } } = await supabaseClient.auth.getUser();
-
-    if (!user) {
-      authContainer.hidden = false;
-      return;
-    }
-
-    imageInput.click();
-  });
-
-  imageInput.addEventListener('change', async () => {
+  imageInput.addEventListener('change', () => {
     const file = imageInput.files[0];
     if (!file) return;
 
-    addArtistBtn.disabled = true;
-    const url = await uploadUserImage(file);
-    addArtistBtn.disabled = false;
+    // Create a local blob URL for the selected image
+    const url = URL.createObjectURL(file);
     imageInput.value = '';
-    if (!url) return;
 
     const key = `custom_${Date.now()}`;
     const name = `Name`;
